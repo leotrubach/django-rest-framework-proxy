@@ -90,10 +90,12 @@ class ProxyView(BaseProxyView):
             auth_token = '%s:%s' % (username, password)
             auth_token = base64.b64encode(auth_token.encode('utf-8')).decode()
             headers['Authorization'] = 'Basic %s' % auth_token
-        else:
-            auth_token = self.proxy_settings.AUTH.get('token')
-            if auth_token:
-                headers['Authorization'] = auth_token
+            return headers
+        auth_token = self.proxy_settings.AUTH.get('token')
+        if auth_token:
+            headers['Authorization'] = auth_token
+            return headers
+        headers.update(self.proxy_settings.AUTH)
         return headers
 
     def get_verify_ssl(self, request):
